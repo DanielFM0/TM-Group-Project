@@ -14,9 +14,22 @@ We'll definitely look for more sources and combine them together. Since the sent
 
 ## A tentative list of milestones for the project
 Looking for data: Victor
+
 Scraping the data from the web: Daniel
+
 Filtering the data and pre-processing: Tim
+
 Processing the data: Daniel, Tim, Victor
 
 ## Documentation
--
+
+
+
+## Data Sources
+opinion-lexicon-English: http://www.cs.uic.edu/~liub/FBS/opinion-lexicon-English.rar 
+
+SentiWordNet_3.0.0.txt: https://github.com/aesuli/SentiWordNet
+
+subjclueslen1-HLTEMNLP05.tff: https://mpqa.cs.pitt.edu/lexicons/subj_lexicon/
+
+
