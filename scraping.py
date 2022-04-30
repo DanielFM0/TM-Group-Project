@@ -34,4 +34,4 @@ def scrapeWebsite(url: str) -> None:
     
     return None
 
-scrapeWebsite("https://www.ezglot.com/etymologies.php?l=spa&l2=lat&submit=Compare/")
+# scrapeWebsite("https://www.ezglot.com/etymologies.php?l=eng&l2=deu&submit=Compare")
