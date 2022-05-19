@@ -1,9 +1,18 @@
-from processing import words_sentiment
+import csv
 from googletrans import Translator
 
 """ Terminal Command for correct installation: 
-                                $ pip3 install googletrans==3.1.0a0 
+pip3 install googletrans==3.1.0a0 
 """
+
+# Retrieve sentiment lexicon from the csv file
+words_sentiment = {}
+with open('data/processed/words_sentiment.csv', mode='r', newline='') as csv_file:
+    reader = csv.reader(csv_file, delimiter=',')
+    for row in reader:
+        words_sentiment[row[0]] = row[1]
+    del words_sentiment['Word']
+
 
 translator = Translator()
 
@@ -25,9 +34,9 @@ def print_sent_pct(lang, root_lang):
         for lw in loan_words:
             if lw not in words_sentiment:
                 neut += 1
-            elif words_sentiment[lw] == 1:
+            elif words_sentiment[lw] == '1':
                 pos += 1
-            else:
+            elif words_sentiment[lw] == '-1':
                 neg += 1
 
         frac_pos, frac_neg = f"{100*pos/(pos + neg):.2f}", f"{100*neg/(pos + neg):.2f}"
