@@ -1,7 +1,12 @@
 import csv
 
 
-""" PRELIMINARIES """
+""" PRELIMINARIES 
+    
+    This is laid out to work with the 1.6 Million Tweets dataset (https://www.kaggle.com/kazanova/sentiment140) in CSV format,
+    saved as "all_tweets.csv" in the same folder as this file.
+    
+"""
 CREATE_POSITIVE_AND_NEGATIVE_CSVS = True
 
 if CREATE_POSITIVE_AND_NEGATIVE_CSVS:
