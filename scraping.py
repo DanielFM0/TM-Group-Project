@@ -27,11 +27,11 @@ def scrapeWebsite(url: str) -> None:
         origins.append(strings[i+2])
     
     # Write the csv file
-    with open('data/processed/' + words[0] + origins[0], 'a') as output:
+    with open('data/processed/' + words[0] + origins[0], 'a', encoding="utf-8", newline='') as output:
         writer = csv.writer(output)
         for i in range(len(words)):
             writer.writerow([words[i], origins[i]])
     
     return None
 
-# scrapeWebsite("https://www.ezglot.com/etymologies.php?l=eng&l2=deu&submit=Compare")
+#scrapeWebsite("https://www.ezglot.com/etymologies.php?l=sqi&l2=tur&submit=Compare")
