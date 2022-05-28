@@ -108,14 +108,14 @@ with open("negative_tweets.csv", mode="r", newline='', encoding="UTF8") as negat
         pos_lines = [[line.split(",")[0].strip('"\''), los_to_string(line.split(",")[1:])]
                      for line in positive_tweets.readlines()]
 
-        neg_tokens = filter_lines(neg_lines[:100])
-        pos_tokens = filter_lines(pos_lines[:100])
+        neg_tokens = filter_lines(neg_lines)
+        pos_tokens = filter_lines(pos_lines)
 
     if FILTERING and SCAN_LOANWORDS:
         loan_word_dict = {}
         source_lang_sent_count = {lang: [0, 0] for lang in english_source_langs}
         for source_lang in english_source_langs:
-            with open("data/processed/English"+source_lang+".csv", mode="r", encoding="UTF8") as file:
+            with open("data/processed/English"+source_lang, mode="r", encoding="UTF8") as file:
                 reader = csv.reader(file)
                 loan_word_dict[source_lang] = [line[0] for line in reader]
 
