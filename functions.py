@@ -1,20 +1,33 @@
 import csv
-from googletrans import Translator
 
-""" Terminal Command for correct installation: 
-pip3 install googletrans==3.1.0a0 
-"""
+languages = [
+    'albanian',
+    'czech',
+    'danish',
+    'dutch',
+    'english',
+    'finnish',
+    'french', 
+    'german',
+    'hungarian',
+    'italian',
+    'polish',
+    'portuguese', 
+    'romanian',
+    'spanish', 
+    'swedish']
 
 # Retrieve sentiment lexicon from the csv file
 words_sentiment = {}
-with open('data/processed/words_sentiment.csv', mode='r', newline='') as csv_file:
-    reader = csv.reader(csv_file, delimiter=',')
-    for row in reader:
-        words_sentiment[row[0]] = row[1]
-    del words_sentiment['Word']
+for lang in languages:
+    with open('data/processed/words_sentiment_' + lang + '.csv', mode='r', newline='', encoding='utf-8') as csv_file:
+        reader = csv.reader(csv_file, delimiter=',')
+        current_words_sentiment = {}
+        for row in reader:
+            current_words_sentiment[row[0]] = row[1]
+        del current_words_sentiment['Word']
+        words_sentiment[lang] = current_words_sentiment
 
-
-translator = Translator()
 
 def print_sent_pct(lang, root_lang):
     """ Takes a string root_lang and locates the corresponding .csv file in the
@@ -27,16 +40,13 @@ def print_sent_pct(lang, root_lang):
     with open("data/processed/"+lang+root_lang, encoding="latin-1") as lw_file:
         loan_words = [tpl.split(",")[0] for tpl in lw_file.readlines()[1:]]
 
-        if lang != "English":
-            loan_words = [translator.translate(w).text for w in loan_words]  # incr. running speed: [... in loan_words[:300]]
-
         pos, neg, neut = 0, 0, 0
         for lw in loan_words:
-            if lw not in words_sentiment:
+            if lw not in words_sentiment[lang.lower()]:
                 neut += 1
-            elif words_sentiment[lw] == '1':
+            elif words_sentiment[lang.lower()][lw] == '1':
                 pos += 1
-            elif words_sentiment[lw] == '-1':
+            elif words_sentiment[lang.lower()][lw] == '-1':
                 neg += 1
 
         frac_pos, frac_neg = f"{100*pos/(pos + neg):.2f}", f"{100*neg/(pos + neg):.2f}"
@@ -48,6 +58,7 @@ def print_sent_pct(lang, root_lang):
                   key + " sentiment: " + fraction_dict[key] + "%.")
 
 
-print_sent_pct("English", "French")
-print_sent_pct("English", "German")
-print_sent_pct("Spanish", "Latin")
+#print_sent_pct("English", "French")
+#print_sent_pct("English", "German")
+for lang in languages:
+    print_sent_pct(lang.capitalize(), 'Latin')

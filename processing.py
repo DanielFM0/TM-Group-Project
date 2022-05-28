@@ -1,5 +1,10 @@
 import csv
 from numpy import sign
+from googletrans import Translator
+
+""" Terminal Command for correct installation: 
+pip3 install googletrans==3.1.0a0 
+"""
 
 words_sentiment = {}
 
@@ -58,8 +63,8 @@ with open('data/raw/subjclueslen1-HLTEMNLP05.tff', encoding='utf-8') as text:
         word = word.replace('_', ' ')
         words_sentiment[word] = sentiment
 
-# Write csv file
-with open('data/processed/words_sentiment.csv', mode='w', newline='') as csv_file:
+# Write csv file for English sentiment data
+with open('data/processed/words_sentiment_english.csv', mode='w', newline='', encoding='utf-8') as csv_file:
     csv_writer = csv.writer(csv_file)
 
     csv_writer.writerow(['Word', 'Sentiment'])
@@ -67,3 +72,41 @@ with open('data/processed/words_sentiment.csv', mode='w', newline='') as csv_fil
     keys = list(words_sentiment.keys())
     keys.sort()
     csv_writer.writerows([[key, words_sentiment[key]] for key in keys])
+
+
+languages = [
+    'albanian',
+    'czech',
+    'danish',
+    'dutch',
+    'finnish',
+    'french', 
+    'german',
+    'hungarian',
+    'italian',
+    'polish',
+    'portuguese', 
+    'romanian',
+    'spanish', 
+    'swedish']
+    
+translator = Translator()
+
+for lang in languages:
+    with open('data/processed/words_sentiment_' + lang + '.csv', mode='w', newline='', encoding='utf-8') as csv_file:
+        csv_writer = csv.writer(csv_file)
+
+        csv_writer.writerow(['Word', 'Sentiment'])
+
+        keys = list(words_sentiment.keys())
+        keys.sort()
+
+        track = 0
+        for key in keys:
+            new_key = translator.translate(key, src='english', dest=lang).text
+            csv_writer.writerow([new_key, words_sentiment[key]])
+
+            track += 1
+            progress = track / len(keys) * 100
+            print('%.2f%%' % progress, end='\r')
+        print(lang + ' is done!')
