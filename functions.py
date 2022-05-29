@@ -1,4 +1,6 @@
 import csv
+import numpy as np
+import matplotlib.pyplot as plt
 
 languages = [
     'albanian',
@@ -56,9 +58,61 @@ def print_sent_pct(lang, root_lang):
         for key in fraction_dict:
             print("Fraction of "+ lang + " words originating from " + root_lang + " that have " + 
                   key + " sentiment: " + fraction_dict[key] + "%.")
+        return float(fraction_dict['a negative']) / 100
 
 
 #print_sent_pct("English", "French")
 #print_sent_pct("English", "German")
-for lang in languages:
-    print_sent_pct(lang.capitalize(), 'Latin')
+
+
+def plot_lang(rec_lang, ori_langs):
+    '''Do not capitalize the rec_lang but do the others'''
+    diff = []
+    colors = []
+    for lang in ori_langs:
+        result = 0.5561128526645768 - print_sent_pct(rec_lang.capitalize(), lang)
+        diff.append(result)
+        if result < 0.0:
+            colors.append('#F13C39')
+        else:
+            colors.append('#59CB9C')
+
+
+    fig = plt.figure()
+    plt.grid(linestyle= '--', axis='y')
+    plt.xlabel('Origin languages')
+    plt.ylabel('Difference of negative sentiment ratio')
+    plt.title('Sentiment of loanwords words in ' + rec_lang.capitalize())
+    ax = fig.add_subplot(111)
+    ax.bar(ori_langs, diff, width=0.3, color = colors)
+    ax.set_axisbelow(True)
+    plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    plt.tight_layout()
+    plt.show()
+
+plot_lang('albanian', ['Latin', 'Turkish'])
+
+# Only used once for Latin
+# diff = []
+# colors = []
+# langs = []
+# for lang in languages:
+#     result = 0.5561128526645768 - print_sent_pct(lang.capitalize(), 'Latin')
+#     diff.append(result)
+#     langs.append(lang.capitalize())
+#     if result < 0.0:
+#         colors.append('#F13C39')
+#     else:
+#         colors.append('#59CB9C')
+# fig = plt.figure()
+# plt.grid(linestyle= '--', axis='y')
+# plt.ylim([-0.09, 0.22])
+# plt.xlabel('Receiving languages')
+# plt.ylabel('Difference of negative sentiment ratio')
+# plt.title('Sentiment of words originating from Latin')
+# ax = fig.add_subplot(111)
+# ax.bar(langs, diff, width=0.3, color = colors)
+# ax.set_axisbelow(True)
+# plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+# plt.tight_layout()
+# plt.show()
