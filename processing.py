@@ -25,26 +25,24 @@ with open('data/raw/opinion-lexicon-English/positive-words.txt', encoding='ibm85
         words_sentiment[word] = 1
 
 # SentiWordNet processing
-# WARNING: THIS HAS A LOT OF WORDS, BUT THEY SEEM OF A LOWER QUALITY, SO FOR NOW
-# IGNORE THESE. WE CAN USE THEM IF WE FIND WE HAVE TOO LITTLE WORDS
-# with open('data/raw/SentiWordNet_3.0.0.txt', encoding='utf-8') as text:
-#     text_lines = text.readlines()
-#     for line in text_lines[26:-1]:
-#         elements = line.split()
-#         pos_score = float(elements[2])
-#         neg_score = float(elements[3])
-#         # some lines have multiple words, but for now those can be ignored
-#         # some words also appear multiple times, but for now that can also be ignored
-#         word = elements[4]
-#         # remove the #num part
-#         word = word[:word.find('#')]
-#         word = word.replace('-', ' ')
-#         word = word.replace('_', ' ')
-#         # words that are not in the dict are considered to be neutral
-#         if ((pos_score == 0 and neg_score == 0) or pos_score == neg_score):
-#             continue
-#         else:
-#             words_sentiment[word] = int(sign(pos_score - neg_score))
+with open('data/raw/SentiWordNet_3.0.0.txt', encoding='utf-8') as text:
+    text_lines = text.readlines()
+    for line in text_lines[26:-1]:
+        elements = line.split()
+        pos_score = float(elements[2])
+        neg_score = float(elements[3])
+        # some lines have multiple words, but for now those can be ignored
+        # some words also appear multiple times, but for now that can also be ignored
+        word = elements[4]
+        # remove the #num part
+        word = word[:word.find('#')]
+        word = word.replace('-', ' ')
+        word = word.replace('_', ' ')
+        # words that are not in the dict are considered to be neutral
+        if ((pos_score == 0 and neg_score == 0) or pos_score == neg_score):
+            continue
+        else:
+            words_sentiment[word] = int(sign(pos_score - neg_score))
 
 # subjclueslen1-HLTEMNLP05 processing
 with open('data/raw/subjclueslen1-HLTEMNLP05.tff', encoding='utf-8') as text:
@@ -109,4 +107,4 @@ for lang in languages:
             track += 1
             progress = track / len(keys) * 100
             print('%.2f%%' % progress, end='\r')
-        print(lang + ' is done!')
+        print(lang.capitalize() + ' is done!')

@@ -37,7 +37,7 @@ def print_sent_pct(lang, root_lang):
         to be neutral. The percentage of classified (= non neutral) words is printed
         as well.
     """
-    with open("data/processed/"+lang+root_lang, encoding="latin-1") as lw_file:
+    with open("data/processed/"+lang+root_lang, encoding="utf-8") as lw_file:
         loan_words = [tpl.split(",")[0] for tpl in lw_file.readlines()[1:]]
 
         pos, neg, neut = 0, 0, 0
