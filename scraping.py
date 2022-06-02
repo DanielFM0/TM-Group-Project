@@ -52,7 +52,7 @@ def scrapeWiktionary(language, origin_language):
     words_filtered = []
     while status == 'next page':
         words= []
-        words = soup.find("div", {"class": "mw-category mw-category-columns"}).text.split('\n')
+        words = soup.find('div', {'id': 'mw-pages'}).find("div", {"class": "mw-category mw-category-columns"}).text.split('\n')
         for word in words:
             word = word.replace('-', '')
             if word[-1].isupper():
@@ -73,4 +73,4 @@ def scrapeWiktionary(language, origin_language):
 
     
 
-scrapeWiktionary('romanian', 'ottoman turkish')
+scrapeWiktionary('polish', 'german')
