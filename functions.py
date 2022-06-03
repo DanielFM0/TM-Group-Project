@@ -1,6 +1,7 @@
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+from yaml import load
 
 languages = [
     'albanian',
@@ -77,42 +78,27 @@ def plot_lang(rec_lang, ori_langs):
         else:
             colors.append('#59CB9C')
 
-
     fig = plt.figure()
     plt.grid(linestyle= '--', axis='y')
     plt.xlabel('Origin languages')
     plt.ylabel('Difference of negative sentiment ratio')
-    plt.title('Sentiment of loanwords words in ' + rec_lang.capitalize())
+    plt.ylim([-0.55, 0.55])
+    plt.title('Sentiment of loanwords in ' + rec_lang.capitalize())
     ax = fig.add_subplot(111)
     ax.bar(ori_langs, diff, width=0.3, color = colors)
     ax.set_axisbelow(True)
     plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha="right", rotation_mode="anchor")
     plt.tight_layout()
-    plt.show()
+    plt.savefig('graphs/' + rec_lang.capitalize() + '.png')
 
-plot_lang('albanian', ['Latin', 'Turkish'])
+def plot_langs():
+    with open("languages.csv", encoding="utf-8") as lw_file:
+        rows = lw_file.readlines()
+        for row in rows:
+            row = row.replace('\n', '').split(',')
+            receiving_language = row[0].lower()
+            origin_languages = row[1:]
+            origin_languages = [lang.replace(' ', '_') for lang in origin_languages]
+            plot_lang(receiving_language, origin_languages)
 
-# Only used once for Latin
-# diff = []
-# colors = []
-# langs = []
-# for lang in languages:
-#     result = 0.5561128526645768 - print_sent_pct(lang.capitalize(), 'Latin')
-#     diff.append(result)
-#     langs.append(lang.capitalize())
-#     if result < 0.0:
-#         colors.append('#F13C39')
-#     else:
-#         colors.append('#59CB9C')
-# fig = plt.figure()
-# plt.grid(linestyle= '--', axis='y')
-# plt.ylim([-0.09, 0.22])
-# plt.xlabel('Receiving languages')
-# plt.ylabel('Difference of negative sentiment ratio')
-# plt.title('Sentiment of words originating from Latin')
-# ax = fig.add_subplot(111)
-# ax.bar(langs, diff, width=0.3, color = colors)
-# ax.set_axisbelow(True)
-# plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha="right", rotation_mode="anchor")
-# plt.tight_layout()
-# plt.show()
+plot_langs()
