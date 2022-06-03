@@ -85,6 +85,7 @@ def plot_lang(rec_lang, ori_langs):
     plt.ylim([-0.55, 0.55])
     plt.title('Sentiment of loanwords in ' + rec_lang.capitalize())
     ax = fig.add_subplot(111)
+    ori_langs = [lang.replace('_', ' ') for lang in ori_langs]
     ax.bar(ori_langs, diff, width=0.3, color = colors)
     ax.set_axisbelow(True)
     plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha="right", rotation_mode="anchor")
@@ -101,4 +102,94 @@ def plot_langs():
             origin_languages = [lang.replace(' ', '_') for lang in origin_languages]
             plot_lang(receiving_language, origin_languages)
 
-plot_langs()
+
+predictions_dict = {
+    'French': 
+    {
+        'English' : '+', # After the world wars they have been friendly since they fought on the same side
+        'German' : '-', # Has been at war with German nations long before even the world wars
+    },
+    'Spanish': 
+    {
+        'Arabic' : '-', # Spanish-Moroccan relations have been bad for a long while
+        'Andalusian Arabic' : '-', # The Reconquista
+    },
+    'Portuguese': 
+    {
+        'Arabic' : '-', # Same as Spain
+        'English' : '+', # Oldest alliance up to this day
+    },
+    'Italian': 
+    {
+        'Arabic' : '-', # Sicilian Arabs were enslaved and kicked off the island in the past...
+        'Old French' : '-', # Italians didn't appreciate the Normans conquering their lands
+    },
+    'Romanian': 
+    {
+        'French' : '+', # Many Romanian nobles studied in the post-Napoleonic France and returned to Romania as Francophiles
+        'Hungarian' : '-', # Romanians were treated as second class citizens in Transylvania by the Hungarians
+        'Old Church Slavonic' : '+', # It is believed that Romanians were friendly with the nearby Slavic tribes
+        'Ottoman Turkish' : '-', # Multiple wars with the Ottomans
+    },
+    'English': 
+    {
+        'Latin' : '+', # The English looked up to the ancient Romans
+        'French' : '+', # After the world wards the countries have been friendly since they fought together
+        'German' : '-', # Fought in the world wars and before
+        'Dutch' : '-', # Had multiple wars due to trading competition
+        'Middle French' : '-', # Had multiple wars since the English had claims over the crown of France
+        'Portuguese' : '+', # Oldest alliance to this day
+        'Old French' : '+', # Old French was spoken by the nobility
+        'Old Norse' : '-', # Fought multiple wars with the Norse vikings
+    },
+    'German': 
+    {
+        'French' : '-', # Fought multiple wars even before the world wars
+        'English' : '-', # Fought in the world wars
+    },
+    'Dutch': 
+    {
+        'French' : '-', # France tried and conquered the Netherlands multiple times
+        'English' : '-', # Had multiple wars over trade
+    },
+    'Finnish': 
+    {
+        'Russian' : '-', # The Winter War
+        'Swedish' : '+', # The two countries are known for having very good relations
+    },
+    'Polish': 
+    {
+        'Latin' : '+', # It was used a lot within the upper class of the Polish-Lithuanian Commonwealth
+        'German' : '-', # Was invaded by Germany multiple times
+    },
+}
+
+def test_predictions():
+    predictions = ''
+    results = ''
+    with open("languages.csv", encoding="utf-8") as lw_file:
+        rows = lw_file.readlines()
+        for row in rows:
+            row = row.replace('\n', '').split(',')
+            receiving_language = row[0]
+            origin_languages = row[1:]
+            for lang in origin_languages:
+                predictions += (predictions_dict[receiving_language][lang])
+            for lang in origin_languages:
+                result = 0.5561128526645768 - print_sent_pct(receiving_language.capitalize(), lang.replace(' ', '_'))
+                if result > 0.0:
+                    results += '+'
+                else:
+                    results += '-'
+
+    print(predictions)
+    print(results)
+    correct = 0
+    for i in range(len(predictions)):
+        if predictions[i] == results[i]:
+            correct += 1
+    print(correct)
+    print(correct / len(predictions))
+
+#plot_langs()
+test_predictions()
