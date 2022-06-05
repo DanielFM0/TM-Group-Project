@@ -14,7 +14,7 @@ Since the sentiment values will be for English words we'll translate the "loanwo
 
 
 ## Documentation
-A reference list for sources used can be found in the report, FinalReport.pdf in this repository. All the code used can be found in the functions.py file.
+A reference list for sources used can be found in the report, FinalReport.pdf in this repository. All the code used can be found in the functions.py file. You can also find a powerpoint of our presentation given during class. The repository can be found here: https://github.com/DanielFM0/TM-Group-Project.
 
 
 ## Data Sources
