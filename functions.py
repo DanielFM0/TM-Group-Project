@@ -45,8 +45,7 @@ def scrapeWebsite(url: str) -> None:
     return None
 
 
-scrapeWebsite(
-    "https://www.ezglot.com/etymologies.php?l=sqi&l2=tur&submit=Compare")
+#scrapeWebsite("https://www.ezglot.com/etymologies.php?l=sqi&l2=tur&submit=Compare")
 
 
 def scrapeWiktionary(language, origin_language):
@@ -88,7 +87,7 @@ def scrapeWiktionary(language, origin_language):
             writer.writerow([words_filtered[i], 'PLACEHOLDER'])
 
 
-scrapeWiktionary('polish', 'german')
+#scrapeWiktionary('polish', 'german')
 
 # Tweet data
 
@@ -120,7 +119,7 @@ def create_tweets_set(RATIO_TEST):
             print("NEG: ", len(negative_tweets.readlines()))
 
 
-create_tweets_set()
+#create_tweets_set()
 
 
 ########################## Data processing ####################################
@@ -223,9 +222,9 @@ def subj_processing(words_sentiment):
 # Write csv file for English sentiment data
 
 
-words_sentiment = oplex_processing(words_sentiment)
-words_sentiment = senti_processing(words_sentiment)
-words_sentiment = subj_processing(words_sentiment)
+#words_sentiment = oplex_processing(words_sentiment)
+#words_sentiment = senti_processing(words_sentiment)
+#words_sentiment = subj_processing(words_sentiment)
 
 
 def write_sentiments(word_sentiments):
@@ -239,7 +238,7 @@ def write_sentiments(word_sentiments):
         csv_writer.writerows([[key, words_sentiment[key]] for key in keys])
 
 
-write_sentiments(words_sentiment)
+#write_sentiments(words_sentiment)
 
 
 def translate_sentiments(words_sentiment, languages):
@@ -270,9 +269,9 @@ def translate_sentiments(words_sentiment, languages):
             print(lang.capitalize() + ' is done!')
 
 
-translate_sentiments(words_sentiment, languages)
+#translate_sentiments(words_sentiment, languages)
 
-# Tweet filtering
+### Tweet filtering
 
 
 def los_to_string(list_of_strings):
@@ -291,7 +290,7 @@ def has_characters(s):
 
 
 def string_remove(s, c):
-    """Remove all occurences of a character c in a string s.
+    """Remove all occurrences of a character c in a string s.
     """
     my_table = s.maketrans(c, '#')
     return_s = ""
@@ -395,8 +394,8 @@ def print_sent_pct(lang, root_lang):
         return float(fraction_dict['a negative']) / 100
 
 
-print_sent_pct("English", "French")
-print_sent_pct("English", "German")
+#print_sent_pct("English", "French")
+#print_sent_pct("English", "German")
 
 # Tweet results
 settings = ["ABSOLUTE", "DOMINANT RANDOM",
@@ -438,11 +437,10 @@ def analyze_tweets(settings, english_source_langs):
             total_tokens = 0  # keep track of total tokens for TOTAL FRACTION IN PCT
             # list of tokens of one tweet
             for tweet_token_list in [pos_tokens, neg_tokens][pos_or_not]:
-                nb_tokens = len(tweet_token_list)    # update token count
-                total_tokens += nb_tokens            #
-                # saves nb of times that a
+                nb_tokens = len(tweet_token_list)
+                total_tokens += nb_tokens            # update token count
+                # saves nb of times that a token matches a source language
                 occurrence_dict = {lang: 0 for lang in english_source_langs}
-                # token matches a source language
                 for token in tweet_token_list:
                     for lang in english_source_langs:
                         if token in loan_word_dict[lang]:
@@ -458,13 +456,14 @@ def analyze_tweets(settings, english_source_langs):
                                   dominant][dominant_langs][pos_or_not] += 1
                 # if multiple highest numbers were found:
                 elif len(dominant_langs) > 0:
-                    # update DOMINANT RANDOM count
+                    # update DOMINANT RANDOM count for randomly chosen language
                     data_dict["DOMINANT RANDOM"][choice(
                         dominant_langs)][pos_or_not] += 1
-                    # for randomly chosen language
-                    for lang in dominant_langs:         # update DOMINANT FRACTION count for all languages
+                    # update DOMINANT FRACTION count for all languages
+                    for lang in dominant_langs:
                         data_dict["DOMINANT FRACTION"][lang][pos_or_not] += 1 / \
                             len(dominant_langs)
+                    # do nothing to DOMINANT IGNORE count
             # update fraction of all tokens that stem from each source language...
             for lang in english_source_langs:
                 data_dict["TOTAL FRAC IN %"][lang][pos_or_not] \
@@ -472,9 +471,7 @@ def analyze_tweets(settings, english_source_langs):
 
     return data_dict
 
-
-data_dict = analyze_tweets(settings, english_source_langs)
-
+#data_dict = analyze_tweets(settings, english_source_langs)
 
 def save_data(data_dict, settings, english_source_langs):
     """Save the data in the approriate csv file. Takes a long time!
@@ -496,7 +493,7 @@ def save_data(data_dict, settings, english_source_langs):
             writer.writerow(row)
 
 
-save_data(data_dict, settings, english_source_langs)
+#save_data(data_dict, settings, english_source_langs)
 
 
 def print_data(data_dict, settings):
@@ -506,8 +503,68 @@ def print_data(data_dict, settings):
         print(setting+": "+str(data_dict[setting]))
 
 
-print_data(data_dict, settings)
+#print_data(data_dict, settings)
 ########################## Visualize data ####################################
+
+def create_and_save_tweet_analysis_plots(load):
+    if not load:
+        data_dict = analyze_tweets(settings, english_source_langs)
+        save_data(data_dict, settings, english_source_langs)
+
+    with open("results_tweet_analysis.csv", mode="r", newline='') as file:
+        lines = csv.reader(file)
+        relevant_data = {"Dutch": {}, "French": [], "German": [], "Latin": [], "Portuguese": []}
+        for line in lines:
+            if line[0] in relevant_data:
+                relevant_data[line[0]] = [float(val) for val in line[1:3] + line[5:]]
+
+        plots = {"Absolute Context Appearances per Origin Language": 0,
+                 "Number of Tweet dominations per Origin Language (FRACTION)": 2,
+                 "Number of Tweet dominations per Origin Language (IGNORE)": 4}
+                 #"Percentage of all Tokens in all Tweets that originate from each Source Language": 6}
+        for key, value in plots.items():
+            labels = relevant_data.keys()
+            pos_occ = [relevant_data[label][value] for label in labels]
+            neg_occ = [relevant_data[label][value + 1] for label in labels]
+
+            pos_occ_scaled = []
+            neg_occ_scaled = []
+
+            for i in range(len(pos_occ)):
+                pos_occ_scaled.append(pos_occ[i]/(pos_occ[i] + neg_occ[i]))
+                neg_occ_scaled.append(neg_occ[i]/(pos_occ[i] + neg_occ[i]))
+
+            x = np.arange(len(labels))  # the label locations
+            width = 0.35  # the width of the bars
+
+            fig, ax = plt.subplots()
+            fig_sc, ax_sc = plt.subplots()
+            rects_1 = ax.bar(x - width/2, pos_occ, width, label='positive occurrences')
+            rects_2 = ax.bar(x + width/2, neg_occ, width, label='negative occurrences')
+            rects_3 = ax_sc.bar(x - width/2, pos_occ_scaled, width, label='positive occurrences')
+            rects_4 = ax_sc.bar(x + width/2, neg_occ_scaled, width, label='negative occurrences')
+            # Add some text for labels, title and custom x-axis tick labels, etc.
+            ax.set_ylabel(key)
+            ax_sc.set_ylabel("percent")
+            ax.set_title(key)
+            ax_sc.set_title("Scaled " + key.replace("Absolute ", ""))
+            ax.set_xticks(x, labels)
+            ax_sc.set_xticks(x, labels)
+            ax.legend()
+            ax_sc.legend()
+
+            ax.bar_label(rects_1, padding=3)
+            ax.bar_label(rects_2, padding=3)
+            ax_sc.bar_label(rects_3, padding=3)
+            ax_sc.bar_label(rects_4, padding=3)
+
+            fig.tight_layout()
+            fig_sc.tight_layout()
+
+            plt.show()
+            plt.savefig('graphs/' + key.replace(" ", "_") + '.png')
+
+create_and_save_tweet_analysis_plots(True)
 
 
 def plot_lang(rec_lang, ori_langs):
@@ -551,7 +608,7 @@ def plot_langs():
             plot_lang(receiving_language, origin_languages)
 
 
-plot_langs()
+#plot_langs()
 
 ########################## Sentiment prediction ####################################
 predictions_dict = {
@@ -654,4 +711,4 @@ def test_predictions(prediction_dict):
     print(correct / len(predictions))
 
 
-test_predictions()
+#test_predictions()
