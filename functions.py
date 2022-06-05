@@ -291,7 +291,7 @@ def has_characters(s):
 
 
 def string_remove(s, c):
-    """
+    """Remove all occurences of a character c in a string s.
     """
     my_table = s.maketrans(c, '#')
     return_s = ""
